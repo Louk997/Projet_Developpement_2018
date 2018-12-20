@@ -1,23 +1,15 @@
 from Class_Projet import *
 
-"""def menu():"""
-
-
 client = Client()
 client.start()
-s = client.get_my_socket()
-distant_socket, addr = s.accept()
-print("Connection accepted for :", addr)
-hostname = client.get_hostname(distant_socket)
-
-"""menu()"""
+client.bind()
 
 while True:
-    cmd = input(str(addr[0])+"@"+str(hostname)+">")
-    if cmd == "quit":
-        client.send(distant_socket, cmd)
-        client.quit(distant_socket)
+    cmd = input()
+    if cmd == "quit()":
+        client.send(cmd)
+        client.quit()
     else:
         print("Me : " + cmd)
-        client.send(distant_socket, cmd)
-        client.receive(distant_socket)
+        client.send(cmd)
+        client.receive()
