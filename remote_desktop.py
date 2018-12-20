@@ -31,7 +31,10 @@ else:
     choice = client.main_menu()
 
 client.send(choice)
-time.sleep(2)
+
+if args.shell or args.informations:
+    time.sleep(1.5)
+
 while choice != "0" and choice is not None:
     if choice == "1":
         while choice != "4":
@@ -56,8 +59,7 @@ while choice != "0" and choice is not None:
             client.info_arg("users")
         else:
             choice2 = client.display_choice()
-
-        client.choice_information(choice2)
+            client.choice_information(choice2)
 
     choice = client.main_menu()
     client.send(choice)
