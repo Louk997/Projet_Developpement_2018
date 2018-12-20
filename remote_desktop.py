@@ -16,28 +16,32 @@ client.start()
 client.conn()
 
 if args.shell:
-    choix = "1"
+    choice = "1"
 elif args.informations:
-    choix = "2"
+    choice = "2"
 else:
-    choix = client.main_menu()
+    choice = client.main_menu()
 
-
-client.send(choix)
-if choix == "1":
-    while True:
-        print(client.receive(), end="")
-        cmd = input()
-        client.send(cmd)
-        if cmd == "quit":
-            client.quit()
-        else:
+while choice != "0" and choice is not None:
+    client.send(choice)
+    if choice == "1":
+        while choice != "4":
             print(client.receive(), end="")
+            cmd = input()
+            client.send(cmd)
+            if cmd == "quit":
+                client.quit()
+            elif cmd == "menu":
+                choice = "4"
+            else:
+                print(client.receive(), end="")
 
-elif choix == "2":
-    if args.informations == "computername":
-        choix2 = "1"
-    else:
-        choix2 = client.display_choice()
+    elif choice == "2":
+        if args.informations == "computername":
+            choice2 = "1"
+        else:
+            choice2 = client.display_choice()
 
-    client.choice_information(choix2)
+        client.choice_information(choice2)
+
+    choice = client.main_menu()
