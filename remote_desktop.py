@@ -6,7 +6,7 @@ parser = argparse.ArgumentParser()
 
 parser.add_argument("-s", "--shell", action="store_true", help="<<Access directly to the remote shell>>")
 parser.add_argument("-i", "--informations", choices=["menu", "computername", "network", "currentuser", "allusers"],
-                    default="menu", help="<<Directly get informations>>")
+                    help="<<Directly get informations>>")
 parser.add_argument("-b", "--buffsize", type=int, choices=[1024, 2048, 4096, 8192, 16384], default=4096,
                     help="<<Choose an optional buffsize (default = 4096),>>")
 
