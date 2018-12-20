@@ -127,11 +127,11 @@ class Client(Machine):
         sys.exit()
 
     def main_menu(self):
-        print("╔═════════════════════════════════════════════════════════╗")
+        print("╔═════════════════════════════════════════════════╗")
         print("  |\  /|   /\   | |\  |   |\  /| |¯¯¯ |\  | |   |")
         print("  | \/ |  /__\  | | \ |   | \/ | |--  | \ | |   |")
         print("  |    | /    \ | |  \|   |    | |___ |  \| |___|")
-        print("╚═════════════════════════════════════════════════════════╝")
+        print("╚═════════════════════════════════════════════════╝")
         print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
         print("Press 2 to get informations")
         choix = input()
@@ -162,6 +162,11 @@ class Client(Machine):
         self.quit()
 
     def display_choice(self):
+        print("╔══════════════════════════════════════════════╗")
+        print("  | |\  | |¯¯¯ |¯¯¯|   |\  /| |¯¯¯ |\  | |   |")
+        print("  | | \ | |--  |   |   | \/ | |--  | \ | |   |")
+        print("  | |  \| |    |___|   |    | |___ |  \| |___|")
+        print("╚══════════════════════════════════════════════╝")
         print("\nPress 1 to get the infected computer name")
         print("Press 2 to see who is the current user")
         print("Press 3 to get the network configuration")
