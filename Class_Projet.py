@@ -1,4 +1,7 @@
-import socket, os, sys, time
+import socket
+import os
+import sys
+import time
 import subprocess
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
@@ -127,11 +130,12 @@ class Client(Machine):
         sys.exit()
 
     def main_menu(self):
-        print("╔═════════════════════════════════════════════════╗")
-        print("  |\  /|   /\   | |\  |   |\  /| |¯¯¯ |\  | |   |")
-        print("  | \/ |  /__\  | | \ |   | \/ | |--  | \ | |   |")
-        print("  |    | /    \ | |  \|   |    | |___ |  \| |___|")
-        print("╚═════════════════════════════════════════════════╝")
+        print("                   _                                   \n",
+              "      /\\/\\   __ _(_)_ __     /\\/\\   ___ _ __  _   _ \n",
+              "     /    \\ / _` | | \'_ \\   /    \\ / _ \\ \'_ \\| | | |\n",
+              "    / /\\/\\ \\ (_| | | | | | / /\\/\\ \\  __/ | | | |_| |\n",
+              "    \\/    \\/\\__,_|_|_| |_| \\/    \\/\\___|_| |_|\\__,_|\n",
+              "                                                    \n")
         print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
         print("Press 2 to get informations")
         choix = input()
@@ -162,11 +166,11 @@ class Client(Machine):
         self.quit()
 
     def display_choice(self):
-        print("╔══════════════════════════════════════════════╗")
-        print("  | |\  | |¯¯¯ |¯¯¯|   |\  /| |¯¯¯ |\  | |   |")
-        print("  | | \ | |--  |   |   | \/ | |--  | \ | |   |")
-        print("  | |  \| |    |___|   |    | |___ |  \| |___|")
-        print("╚══════════════════════════════════════════════╝")
+        print("   _____        __                                 \n",
+              "  \\_   \\_ __  / _| ___     /\\/\\   ___ _ __  _   _ \n",
+              "   / /\\/ \'_ \\| |_ / _ \\   /    \\ / _ \\ \'_ \\| | | |\n",
+              "/\\/ /_ | | | |  _| (_) | / /\\/\\ \\  __/ | | | |_| |\n",
+              "\\____/ |_| |_|_|  \\___/  \\/    \\/\\___|_| |_|\\__,_|\n")
         print("\nPress 1 to get the infected computer name")
         print("Press 2 to see who is the current user")
         print("Press 3 to get the network configuration")
