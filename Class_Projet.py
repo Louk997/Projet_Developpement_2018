@@ -60,7 +60,9 @@ class Client(Machine):
         distant_socket.send(commande.encode(self.language))
 
     def receive(self, distant_socket):
-        print(distant_socket.recv(self.buffsize).decode(self.language))
+        rep = distant_socket.recv(self.buffsize)
+        rep = rep.decode(self.language)
+        print(rep)
 
     def quit(self, distant_socket):
         print("Shutting down in 3 seconds")
