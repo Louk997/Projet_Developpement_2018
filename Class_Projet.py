@@ -117,7 +117,7 @@ class Client(Machine):
         return choix
 
     def choice_information(self, choix2):
-        while int(choix2) != 0:
+        while choix2 != "0":
             if choix2 == "1":
                 self.send("computer")
                 print("\nComputer name : ", end="")
