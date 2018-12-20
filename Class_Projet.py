@@ -138,8 +138,9 @@ class Client(Machine):
               "                                                    \n")
         print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
         print("Press 2 to get informations")
-        choix = input()
-        return choix
+        print("Press 0 to quit")
+        choice = input()
+        return choice
 
     def choice_information(self, choice2):
         while choice2 != "0" and choice2 != "5" and choice2 is not None:
@@ -167,6 +168,12 @@ class Client(Machine):
         else:
             self.send("quit")
             self.quit()
+
+    def info_arg(self, argument):
+        self.send(argument)
+        print(self.receive())
+        self.send("quit")
+        self.quit()
 
     def display_choice(self):
         print("   _____        __                                 \n",
