@@ -126,7 +126,7 @@ class Client(Machine):
         self.my_socket.close()
         sys.exit()
 
-    def menu_principal(self):
+    def main_menu(self):
         print("╔═════════════════════════════════════════════════════════╗")
         print("  |\  /|   /\   | |\  |   |\  /| |¯¯¯ |\  | |   |")
         print("  | \/ |  /__\  | | \ |   | \/ | |--  | \ | |   |")
@@ -156,12 +156,12 @@ class Client(Machine):
             else:
                 print("Enter a valid value!\n")
 
-            choix2 = self.affiche_choix()
+            choix2 = self.display_choice()
 
         self.send("quit")
         self.quit()
 
-    def affiche_choix(self):
+    def display_choice(self):
         print("\nPress 1 to get the infected computer name")
         print("Press 2 to see who is the current user")
         print("Press 3 to get the network configuration")
