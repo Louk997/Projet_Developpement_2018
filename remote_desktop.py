@@ -20,7 +20,7 @@ if args.shell:
 elif args.informations:
     choix = "2"
 else:
-    choix = client.menu_principal()
+    choix = client.main_menu()
 
 
 client.send(choix)
@@ -38,6 +38,6 @@ elif choix == "2":
     if args.informations == "computername":
         choix2 = "1"
     else:
-        choix2 = client.affiche_choix()
+        choix2 = client.display_choice()
 
     client.choice_information(choix2)
