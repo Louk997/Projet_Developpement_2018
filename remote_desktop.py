@@ -14,7 +14,7 @@ hostname = client.get_hostname(distant_socket)
 
 while True:
     cmd = input(str(addr[0])+"@"+str(hostname)+">")
-    if cmd == "quit()":
+    if cmd == "quit":
         client.send(distant_socket, cmd)
         client.quit(distant_socket)
     else:
