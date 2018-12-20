@@ -1,4 +1,4 @@
-from Class_Projet import *
+from Class_Projet import Client
 
 
 client = Client()
@@ -7,8 +7,8 @@ choix = client.bind()
 
 
 if choix == "1":
-    client.receive()
     while True:
+        client.receive()
         cmd = input()
         client.send(cmd)
         if cmd == "quit":
