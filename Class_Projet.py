@@ -1,6 +1,7 @@
 import socket
 import os
 import sys
+import time
 
 """
 Classe contenant les fonctions communes entre client et serveur
@@ -62,6 +63,8 @@ class Client(Machine):
         print(distant_socket.recv(self.buffsize).decode(self.language))
 
     def quit(self, distant_socket):
+        print("Shutting down in 3 seconds")
+        time.sleep(3)
         distant_socket.close()
         self.my_socket.close()
         sys.exit()
