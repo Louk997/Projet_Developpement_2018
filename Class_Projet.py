@@ -147,7 +147,7 @@ class Client:
               "    \\/    \\/\\__,_|_|_| |_| \\/    \\/\\___|_| |_|\\__,_|\n",
               "                                                    \n")
         print("Press 1 to access the remote shell")
-        print("Press 2 to get informations (For windows target only)")
+        print("Press 2 to get informations")
         print("Press 0 to quit")
         choice = input()
         return choice
